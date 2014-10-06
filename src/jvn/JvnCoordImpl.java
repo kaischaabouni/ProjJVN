@@ -22,7 +22,7 @@ public class JvnCoordImpl
 	private Hashtable<String,JvnObject> listeObjetsJVN;
 	private Hashtable<Integer,JvNLock> listeLockJVN;
 	private Integer number;
-	private String name = "//localhost/HelloWorld";
+	private String name = "CoordName";
 
   /**
   * Default constructor

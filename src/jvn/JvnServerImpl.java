@@ -24,7 +24,7 @@ public class JvnServerImpl
 	private static JvnServerImpl js = null;
 	// private server rmi;
 	private JvnRemoteCoord rmi;
-	private String name = "//localhost/HelloWorld";
+	private String name = "CoordName";
 	
 
   /**
