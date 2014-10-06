@@ -122,7 +122,7 @@ public class JvnServerImpl
 	/**
 	* Get a Read lock on a JVN object 
 	* @param joi : the JVN object identification
-	* @return the current JVN object state
+	* @return the current JVN object 
 	* @throws  JvnException
 	**/
    public Serializable jvnLockRead(int joi)
@@ -140,7 +140,7 @@ public class JvnServerImpl
 	/**
 	* Get a Write lock on a JVN object 
 	* @param joi : the JVN object identification
-	* @return the current JVN object state
+	* @return the current JVN object 
 	* @throws  JvnException
 	**/
    public Serializable jvnLockWrite(int joi)
