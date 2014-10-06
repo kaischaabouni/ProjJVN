@@ -21,14 +21,23 @@ public class JvnObjectImpl implements JvnObject {
 
 	public void jvnLockRead() throws JvnException {
 		// TODO Auto-generated method stub
-
+		lock = 1;
 	}
 
+
+	public int getLock() {
+		return lock;
+	}
+
+
+	public int getId() {
+		return id;
+	}
 
 
 	public void jvnLockWrite() throws JvnException {
 		// TODO Auto-generated method stub
-
+		lock = 2;
 	}
 
 	public void jvnUnLock() throws JvnException {
@@ -38,26 +47,28 @@ public class JvnObjectImpl implements JvnObject {
 
 	public int jvnGetObjectId() throws JvnException {
 		// TODO Auto-generated method stub
-		return 0;
+		return id;
 	}
 
 	public Serializable jvnGetObject() throws JvnException {
 		// TODO Auto-generated method stub
-		return null;
+		return objet;
 	}
 
 	public void jvnInvalidateReader() throws JvnException {
 		// TODO Auto-generated method stub
-
+		lock = 0;
 	}
 
 	public Serializable jvnInvalidateWriter() throws JvnException {
 		// TODO Auto-generated method stub
+		lock = 0;
 		return null;
 	}
 
 	public Serializable jvnInvalidateWriterForReader() throws JvnException {
 		// TODO Auto-generated method stub
+		lock = 0;
 		return null;
 	}
 

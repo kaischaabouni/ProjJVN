@@ -20,7 +20,7 @@ public class JvnCoordImpl
 							implements JvnRemoteCoord{
 	
 	private Hashtable<String,JvnObject> listeObjetsJVN;
-	private Hashtable<Integer,JvNLock> listeLockJVN;
+	private Hashtable<Integer,JvnLock> listeLockJVN;
 	private Integer number;
 	private String name = "CoordName";
 
@@ -31,7 +31,7 @@ public class JvnCoordImpl
 	private JvnCoordImpl() throws Exception {
 		// to be completed
 		listeObjetsJVN = new Hashtable<String,JvnObject>();
-		listeLockJVN = new Hashtable<Integer,JvNLock>();
+		listeLockJVN = new Hashtable<Integer,JvnLock>();
 		number = 0;
 		
 		LocateRegistry.createRegistry(1099);
@@ -43,6 +43,7 @@ public class JvnCoordImpl
 	public static void main(String argv[]) {
 		try {
 			JvnCoordImpl coord = new JvnCoordImpl();
+			System.out.println("Coordinateur en marche.");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -74,7 +75,8 @@ public class JvnCoordImpl
   throws java.rmi.RemoteException,jvn.JvnException{
     // to be completed 
 		listeObjetsJVN.put(jon,jo);
-		
+		JvnLock  jlock = new JvnLock((JvnObjectImpl) jo,js);
+		listeLockJVN.put(((JvnObjectImpl) jo).getId(), jlock);
 
   }
   
