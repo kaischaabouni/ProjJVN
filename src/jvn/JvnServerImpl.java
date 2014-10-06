@@ -8,6 +8,7 @@
 
 package jvn;
 
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Hashtable;
@@ -22,7 +23,8 @@ public class JvnServerImpl
   // A JVN server is managed as a singleton 
 	private static JvnServerImpl js = null;
 	// private server rmi;
-	private JvnCoordImpl rmi;
+	private JvnRemoteCoord rmi;
+	private String name = "//localhost/HelloWorld";
 	
 
   /**
@@ -31,7 +33,7 @@ public class JvnServerImpl
   **/
 	private JvnServerImpl() throws Exception {
 		super();
-
+		rmi = (JvnRemoteCoord) Naming.lookup(name);
 		// to be completed
 	}
 	
