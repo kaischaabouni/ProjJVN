@@ -39,7 +39,16 @@ public class JvnCoordImpl
 		//associer objet objSayHello au nom name
 		Naming.rebind(name, this);
 	}
-
+	
+	public static void main(String argv[]) {
+		try {
+			JvnCoordImpl coord = new JvnCoordImpl();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
   /**
   *  Allocate a NEW JVN object id (usually allocated to a 
   *  newly created JVN object)
