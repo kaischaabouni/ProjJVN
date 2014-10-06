@@ -18,13 +18,6 @@ public class JvnObjectImpl implements JvnObject {
 	}
 
 
-
-	public void jvnLockRead() throws JvnException {
-		// TODO Auto-generated method stub
-		lock = 1;
-	}
-
-
 	public int getLock() {
 		return lock;
 	}
@@ -33,7 +26,11 @@ public class JvnObjectImpl implements JvnObject {
 	public int getId() {
 		return id;
 	}
-
+	
+	public void jvnLockRead() throws JvnException {
+		// TODO Auto-generated method stub
+		lock = 1;
+	}
 
 	public void jvnLockWrite() throws JvnException {
 		// TODO Auto-generated method stub

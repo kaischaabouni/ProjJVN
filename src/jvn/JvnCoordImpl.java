@@ -89,7 +89,7 @@ public class JvnCoordImpl
   public JvnObject jvnLookupObject(String jon, JvnRemoteServer js)
   throws java.rmi.RemoteException,jvn.JvnException{
     // to be completed 
-    return null;
+    return listeObjetsJVN.get(jon);
   }
   
   /**
