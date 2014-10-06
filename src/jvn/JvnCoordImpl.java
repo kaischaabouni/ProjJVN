@@ -90,7 +90,6 @@ public class JvnCoordImpl
   throws java.rmi.RemoteException,jvn.JvnException{
     // to be completed 
     return listeObjetsJVN.get(jon);
-    
   }
   
   /**
