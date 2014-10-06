@@ -106,6 +106,8 @@ public class JvnCoordImpl
    throws java.rmi.RemoteException, JvnException{
     // to be completed
 	   JvnObjectImpl objet = (JvnObjectImpl) listeObjetsJVN.get(joi);
+	   JvnLock jlock = listeLockJVN.get(objet.getId());
+	   jlock.addServer(js);
     return objet.getLock();
    }
 
