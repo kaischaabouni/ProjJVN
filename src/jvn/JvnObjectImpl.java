@@ -60,13 +60,13 @@ public class JvnObjectImpl implements JvnObject {
 	public Serializable jvnInvalidateWriter() throws JvnException {
 		// TODO Auto-generated method stub
 		lock = 0;
-		return null;
+		return objet;
 	}
 
 	public Serializable jvnInvalidateWriterForReader() throws JvnException {
 		// TODO Auto-generated method stub
 		lock = 0;
-		return null;
+		return objet;
 	}
 
 }

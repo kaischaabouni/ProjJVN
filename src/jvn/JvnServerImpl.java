@@ -24,8 +24,7 @@ public class JvnServerImpl
 	private static JvnServerImpl js = null;
 	// private server rmi;
 	private JvnRemoteCoord remoteCoord;
-	private String name = "CoordName";
-	
+	private String name = "CoordName";	
 
   /**
   * Default constructor
@@ -123,25 +122,37 @@ public class JvnServerImpl
 	/**
 	* Get a Read lock on a JVN object 
 	* @param joi : the JVN object identification
-	* @return the current JVN object state
+	* @return the current JVN object 
 	* @throws  JvnException
 	**/
    public Serializable jvnLockRead(int joi)
 	 throws JvnException {
 		// to be completed 
-		return null;
+		try {
+			return remoteCoord.jvnLockRead(joi, this);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 
 	}	
 	/**
 	* Get a Write lock on a JVN object 
 	* @param joi : the JVN object identification
-	* @return the current JVN object state
+	* @return the current JVN object 
 	* @throws  JvnException
 	**/
    public Serializable jvnLockWrite(int joi)
 	 throws JvnException {
 		// to be completed 
-		return null;
+		try {
+			return remoteCoord.jvnLockWrite(joi, this);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}	
 
 	
