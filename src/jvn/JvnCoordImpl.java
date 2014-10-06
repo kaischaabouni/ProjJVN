@@ -8,6 +8,8 @@
 
 package jvn;
 
+import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Hashtable;
 import java.io.Serializable;
@@ -20,6 +22,7 @@ public class JvnCoordImpl
 	private Hashtable<String,JvnObject> listeObjetsJVN;
 	private Hashtable<Integer,JvNLock> listeLockJVN;
 	private Integer number;
+	private String name = "//localhost/HelloWorld";
 
   /**
   * Default constructor
@@ -30,6 +33,11 @@ public class JvnCoordImpl
 		listeObjetsJVN = new Hashtable<String,JvnObject>();
 		listeLockJVN = new Hashtable<Integer,JvNLock>();
 		number = 0;
+		
+		LocateRegistry.createRegistry(1099);
+		
+		//associer objet objSayHello au nom name
+		Naming.rebind(name, this);
 	}
 
   /**
