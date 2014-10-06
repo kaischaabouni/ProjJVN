@@ -89,7 +89,10 @@ public class JvnCoordImpl
   public JvnObject jvnLookupObject(String jon, JvnRemoteServer js)
   throws java.rmi.RemoteException,jvn.JvnException{
     // to be completed 
-    return listeObjetsJVN.get(jon);
+	  JvnObject objet = listeObjetsJVN.get(jon);
+	  JvnLock jlock = listeLockJVN.get(((JvnObjectImpl)objet).getId());
+	  jlock.addServer(js);
+    return objet;
   }
   
   /**
@@ -102,7 +105,8 @@ public class JvnCoordImpl
    public Serializable jvnLockRead(int joi, JvnRemoteServer js)
    throws java.rmi.RemoteException, JvnException{
     // to be completed
-    return null;
+	   JvnObjectImpl objet = (JvnObjectImpl) listeObjetsJVN.get(joi);
+    return objet.getLock();
    }
 
   /**
@@ -114,8 +118,8 @@ public class JvnCoordImpl
   **/
    public Serializable jvnLockWrite(int joi, JvnRemoteServer js)
    throws java.rmi.RemoteException, JvnException{
-    // to be completed
-    return null;
+	   JvnObjectImpl objet = (JvnObjectImpl) listeObjetsJVN.get(joi);
+	  return objet.getLock();
    }
 
 	/**
