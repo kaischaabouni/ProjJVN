@@ -23,7 +23,7 @@ public class JvnServerImpl
   // A JVN server is managed as a singleton 
 	private static JvnServerImpl js = null;
 	// private server rmi;
-	private JvnRemoteCoord rmi;
+	private JvnRemoteCoord remoteCoord;
 	private String name = "CoordName";
 	
 
@@ -33,7 +33,7 @@ public class JvnServerImpl
   **/
 	private JvnServerImpl() throws Exception {
 		super();
-		rmi = (JvnRemoteCoord) Naming.lookup(name);
+		remoteCoord = (JvnRemoteCoord) Naming.lookup(name);
 		// to be completed
 	}
 	
@@ -72,7 +72,7 @@ public class JvnServerImpl
 		// to be completed 
 		int id;
 		try {
-			id = rmi.jvnGetObjectId();
+			id = remoteCoord.jvnGetObjectId();
 			JvnObject newJVN = new JvnObjectImpl(o,id);	
 			return newJVN ; 
 		} catch (RemoteException e) {
@@ -92,7 +92,7 @@ public class JvnServerImpl
 	throws jvn.JvnException {
 		// to be completed 
 		try {
-			rmi.jvnRegisterObject(jon,jo,this);
+			remoteCoord.jvnRegisterObject(jon,jo,this);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -111,7 +111,7 @@ public class JvnServerImpl
 	throws jvn.JvnException {
     // to be completed 
 		try {
-			return rmi.jvnLookupObject(jon,this);
+			return remoteCoord.jvnLookupObject(jon,this);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

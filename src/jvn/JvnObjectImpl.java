@@ -33,7 +33,7 @@ public class JvnObjectImpl implements JvnObject {
 
 	public void jvnUnLock() throws JvnException {
 		// TODO Auto-generated method stub
-
+		this.lock = 0;
 	}
 
 	public int jvnGetObjectId() throws JvnException {
