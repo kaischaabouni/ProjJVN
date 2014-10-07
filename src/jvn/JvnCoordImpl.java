@@ -9,8 +9,11 @@
 package jvn;
 
 import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.server.RemoteServer;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.io.Serializable;
 
@@ -20,7 +23,7 @@ public class JvnCoordImpl
 							implements JvnRemoteCoord{
 	
 	private Hashtable<String,JvnObject> listeObjetsJVN;
-	private Hashtable<Integer,JvnLock> listeLockJVN;
+	private Hashtable<Integer,JvnSerialLock> listeLockJVN;
 	private Integer number;
 	private String name = "CoordName";
 
@@ -31,7 +34,7 @@ public class JvnCoordImpl
 	private JvnCoordImpl() throws Exception {
 		// to be completed
 		listeObjetsJVN = new Hashtable<String,JvnObject>();
-		listeLockJVN = new Hashtable<Integer,JvnLock>();
+		listeLockJVN = new Hashtable<Integer,JvnSerialLock>();
 		number = 0;
 		
 		LocateRegistry.createRegistry(1099);
@@ -75,8 +78,9 @@ public class JvnCoordImpl
   throws java.rmi.RemoteException,jvn.JvnException{
     // to be completed 
 		listeObjetsJVN.put(jon,jo);
-		JvnLock  jlock = new JvnLock((JvnObjectImpl) jo,js);
-		listeLockJVN.put(((JvnObjectImpl) jo).getId(), jlock);
+		JvnLock  jlock = new JvnLock(jo,js);
+		JvnSerialLock jserialLock = new JvnSerialLock(jo.jvnGetObject(), jlock);
+		listeLockJVN.put(((JvnObjectImpl) jo).getId(), jserialLock);
 
   }
   
@@ -91,7 +95,7 @@ public class JvnCoordImpl
     // to be completed 
 	  JvnObject objet = listeObjetsJVN.get(jon);
 	  if ( objet != null) {
-			  JvnLock jlock = listeLockJVN.get(((JvnObjectImpl)objet).getId());
+			  JvnLock jlock = listeLockJVN.get(((JvnObjectImpl)objet).getId()).getJvnLock();
 		  if (jlock != null)
 			  jlock.addServer(js);
 	  }
@@ -108,10 +112,18 @@ public class JvnCoordImpl
    public Serializable jvnLockRead(int joi, JvnRemoteServer js)
    throws java.rmi.RemoteException, JvnException{
     // to be completed
-	   JvnObjectImpl objet = (JvnObjectImpl) listeObjetsJVN.get(joi);
-	   JvnLock jlock = listeLockJVN.get(objet.getId());
+	   JvnLock jlock = listeLockJVN.get(joi).getJvnLock();
+	   int lock = jlock.getLock();
+	   if ( lock != 0 ) {
+		   //ArrayList<JvnRemoteServer> serverAvecLock = jlock.getListServer();
+		   for(JvnRemoteServer s: jlock.getListServer()){
+			   s.jvnInvalidateReader(joi);
+			   jlock.removeServer(s);
+		   }
+	   }
+	   listeLockJVN.get(joi).getJvnLock().setLock(1);
 	   jlock.addServer(js);
-    return objet.getLock();
+    return listeLockJVN.get(joi).getObjet();
    }
 
   /**
@@ -123,8 +135,20 @@ public class JvnCoordImpl
   **/
    public Serializable jvnLockWrite(int joi, JvnRemoteServer js)
    throws java.rmi.RemoteException, JvnException{
-	   JvnObjectImpl objet = (JvnObjectImpl) listeObjetsJVN.get(joi);
-	  return objet.getLock();
+	   
+	   JvnLock jlock = listeLockJVN.get(joi).getJvnLock();
+	   int lock = jlock.getLock();
+	   if ( lock != 0 ) {
+		   //ArrayList<JvnRemoteServer> serverAvecLock = jlock.getListServer();
+		   for(JvnRemoteServer s: jlock.getListServer()){
+			   JvnSerialLock serialLock = listeLockJVN.get(joi);
+			   serialLock.setObjet(s.jvnInvalidateWriter(joi));
+			   jlock.removeServer(s);
+		   }
+	   }
+	   listeLockJVN.get(joi).getJvnLock().setLock(2);
+	   jlock.addServer(js);
+	  return listeLockJVN.get(joi).getObjet();
    }
 
 	/**
@@ -135,7 +159,9 @@ public class JvnCoordImpl
     public void jvnTerminate(JvnRemoteServer js)
 	 throws java.rmi.RemoteException, JvnException {
 	 // to be completed
+    	
     }
+
 }
 
  

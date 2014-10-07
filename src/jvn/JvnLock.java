@@ -8,8 +8,8 @@ public class JvnLock {
 	private int lock;
 	private ArrayList<JvnRemoteServer> listServer;
 	
-	public JvnLock(JvnObjectImpl jo, JvnRemoteServer server) {
-		this.lock = jo.getLock();
+	public JvnLock(JvnObject jo, JvnRemoteServer server) {
+		this.lock = ((JvnObjectImpl) jo).getLock();
 		this.listServer = new ArrayList<JvnRemoteServer>(); 
 		this.listServer.add(server);
 	}
