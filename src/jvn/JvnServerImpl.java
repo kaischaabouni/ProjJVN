@@ -110,7 +110,14 @@ public class JvnServerImpl
 	throws jvn.JvnException {
     // to be completed 
 		try {
-			return remoteCoord.jvnLookupObject(jon,this);
+			JvnObject result = remoteCoord.jvnLookupObject(jon,this);
+			if (result != null){
+				((JvnObjectImpl)result).setRemoteServ(this);
+				tableauObjet.put(((JvnObjectImpl)result).getId(), result);
+				return result;
+			}else {
+				return null;
+			}
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -166,6 +173,7 @@ public class JvnServerImpl
   public void jvnInvalidateReader(int joi)
 	throws java.rmi.RemoteException,jvn.JvnException {
 		// to be completed 
+	  tableauObjet.get(joi).jvnInvalidateReader();
 	};
 	    
 	/**
@@ -177,7 +185,7 @@ public class JvnServerImpl
   public Serializable jvnInvalidateWriter(int joi)
 	throws java.rmi.RemoteException,jvn.JvnException { 
 		// to be completed 
-		return tableauObjet.get(joi).jvnGetObject();
+		return tableauObjet.get(joi).jvnInvalidateWriter();
 	};
 	
 	/**
@@ -189,7 +197,7 @@ public class JvnServerImpl
    public Serializable jvnInvalidateWriterForReader(int joi)
 	 throws java.rmi.RemoteException,jvn.JvnException { 
 		// to be completed 
-		return tableauObjet.get(joi).jvnGetObject();
+		return tableauObjet.get(joi).jvnInvalidateWriterForReader();
 	 };
 
 }

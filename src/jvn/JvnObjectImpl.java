@@ -7,7 +7,7 @@ public class JvnObjectImpl implements JvnObject {
 	private Serializable objet;
 	private int id;
 	private int lock; // 0: No lock , 1: lock READ , 2 lock WRITTE
-	private JvnServerImpl remoteServ;
+	private transient JvnServerImpl remoteServ;
 
 
 	public JvnObjectImpl(Serializable objet, int id,JvnServerImpl server) {
@@ -28,6 +28,12 @@ public class JvnObjectImpl implements JvnObject {
 		return id;
 	}
 	
+	
+	public void setRemoteServ(JvnServerImpl remoteServ) {
+		this.remoteServ = remoteServ;
+	}
+
+
 	public void jvnLockRead() throws JvnException {
 		// TODO Auto-generated method stub
 
@@ -39,11 +45,13 @@ public class JvnObjectImpl implements JvnObject {
 
 	public void jvnLockWrite() throws JvnException {
 		// TODO Auto-generated method stub
+		objet = remoteServ.jvnLockWrite(id);
 		lock = 2;
 	}
 
 	public void jvnUnLock() throws JvnException {
 		// TODO Auto-generated method stub
+		// NOTIFY
 		this.lock = 0;
 	}
 
@@ -64,14 +72,17 @@ public class JvnObjectImpl implements JvnObject {
 
 	public Serializable jvnInvalidateWriter() throws JvnException {
 		// TODO Auto-generated method stub
+		// WAIT
 		lock = 0;
 		return objet;
 	}
 
 	public Serializable jvnInvalidateWriterForReader() throws JvnException {
 		// TODO Auto-generated method stub
+		// WAIT
 		lock = 0;
 		return objet;
 	}
 
+	
 }
