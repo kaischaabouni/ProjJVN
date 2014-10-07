@@ -22,6 +22,11 @@ public class JvnLock {
 	public int getLock() {
 		return lock;
 	}
+	
+	public void resetServer(JvnRemoteServer server) {
+		this.listServer = new ArrayList<JvnRemoteServer>(); 
+		this.listServer.add(server);
+	}
 
 	public void setLock(int lock) {
 		this.lock = lock;

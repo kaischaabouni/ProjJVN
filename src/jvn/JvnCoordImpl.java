@@ -107,22 +107,24 @@ public class JvnCoordImpl
   * @return the current JVN object state
   * @throws java.rmi.RemoteException, JvnException
   **/
-   public Serializable jvnLockRead(int joi, JvnRemoteServer js)
-   throws java.rmi.RemoteException, JvnException{
-    // to be completed
-	   JvnLock jlock = listeLockJVN.get(joi).getJvnLock();
-	   int lock = jlock.getLock();
-	   if ( lock != 0 ) {
-		   ArrayList<JvnRemoteServer> serverAvecLock = jlock.getListServer();
-		   for(JvnRemoteServer s: serverAvecLock){
-			   s.jvnInvalidateReader(joi);
-			  // jlock.removeServer(s);
-		   }
-	   }
-	   listeLockJVN.get(joi).getJvnLock().setLock(1);
-	   jlock.addServer(js);
-	   return listeLockJVN.get(joi).getObjet();
-   }
+  public Serializable jvnLockRead(int joi, JvnRemoteServer js)
+		  throws java.rmi.RemoteException, JvnException{
+	  // to be completed
+	  JvnLock jlock = listeLockJVN.get(joi).getJvnLock();
+	  int lock = jlock.getLock();
+	  if ( lock == 2 ) {
+		  ArrayList<JvnRemoteServer> serverAvecLock = jlock.getListServer();
+		  for(JvnRemoteServer s: serverAvecLock){
+			  if (s != js) {
+				  JvnSerialLock serialLock = listeLockJVN.get(joi);
+				  serialLock.setObjet(s.jvnInvalidateWriterForReader(joi));
+			  }
+		  }
+	  }
+	  jlock.addServer(js);
+	  listeLockJVN.get(joi).getJvnLock().setLock(1);
+	  return listeLockJVN.get(joi).getObjet();
+  }
 
   /**
   * Get a Write lock on a JVN object managed by a given JVN server 
@@ -136,16 +138,25 @@ public class JvnCoordImpl
 	   
 	   JvnLock jlock = listeLockJVN.get(joi).getJvnLock();
 	   int lock = jlock.getLock();
-	   if ( lock != 0 ) {
+	   if ( lock == 2 ) {
 		   ArrayList<JvnRemoteServer> serverAvecLock = jlock.getListServer();
 		   for(JvnRemoteServer s: serverAvecLock){
-			   JvnSerialLock serialLock = listeLockJVN.get(joi);
-			   serialLock.setObjet(s.jvnInvalidateWriter(joi));
-			  // jlock.removeServer(s);
+			   if (s != js) {
+				   JvnSerialLock serialLock = listeLockJVN.get(joi);
+				   serialLock.setObjet(s.jvnInvalidateWriter(joi));
+			   }
+		   }
+	   }else if ( lock == 1 ) {
+		   ArrayList<JvnRemoteServer> serverAvecLock = jlock.getListServer();
+		   for(JvnRemoteServer s: serverAvecLock){
+			   if (s != js) {
+				   s.jvnInvalidateReader(joi);
+			   }
 		   }
 	   }
+	  
 	   listeLockJVN.get(joi).getJvnLock().setLock(2);
-	   jlock.addServer(js);
+	   jlock.resetServer(js);
 	  return listeLockJVN.get(joi).getObjet();
    }
 
