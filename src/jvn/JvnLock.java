@@ -14,6 +14,11 @@ public class JvnLock {
 		this.listServer.add(server);
 	}
 
+	public JvnLock(JvnObject jo) {
+		this.lock = ((JvnObjectImpl) jo).getLock();
+		this.listServer = new ArrayList<JvnRemoteServer>(); 
+	}
+
 	public int getLock() {
 		return lock;
 	}
