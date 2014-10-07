@@ -9,8 +9,11 @@
 package jvn;
 
 import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.server.RemoteServer;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.io.Serializable;
 
@@ -20,7 +23,7 @@ public class JvnCoordImpl
 							implements JvnRemoteCoord{
 	
 	private Hashtable<String,JvnObject> listeObjetsJVN;
-	private Hashtable<Integer,JvnLock> listeLockJVN;
+	private Hashtable<Integer,JvnSerialLock> listeLockJVN;
 	private Integer number;
 	private String name = "CoordName";
 
@@ -31,7 +34,7 @@ public class JvnCoordImpl
 	private JvnCoordImpl() throws Exception {
 		// to be completed
 		listeObjetsJVN = new Hashtable<String,JvnObject>();
-		listeLockJVN = new Hashtable<Integer,JvnLock>();
+		listeLockJVN = new Hashtable<Integer,JvnSerialLock>();
 		number = 0;
 		
 		LocateRegistry.createRegistry(1099);
@@ -75,8 +78,9 @@ public class JvnCoordImpl
   throws java.rmi.RemoteException,jvn.JvnException{
     // to be completed 
 		listeObjetsJVN.put(jon,jo);
-		JvnLock  jlock = new JvnLock((JvnObjectImpl) jo,js);
-		listeLockJVN.put(((JvnObjectImpl) jo).getId(), jlock);
+		JvnLock  jlock = new JvnLock(jo);
+		JvnSerialLock jserialLock = new JvnSerialLock(jo.jvnGetObject(), jlock);
+		listeLockJVN.put(((JvnObjectImpl) jo).getId(), jserialLock);
 
   }
   
@@ -91,9 +95,7 @@ public class JvnCoordImpl
     // to be completed 
 	  JvnObject objet = listeObjetsJVN.get(jon);
 	  if ( objet != null) {
-			  JvnLock jlock = listeLockJVN.get(((JvnObjectImpl)objet).getId());
-		  if (jlock != null)
-			  jlock.addServer(js);
+			  JvnLock jlock = listeLockJVN.get(((JvnObjectImpl)objet).getId()).getJvnLock();
 	  }
     return objet;
   }
@@ -105,14 +107,24 @@ public class JvnCoordImpl
   * @return the current JVN object state
   * @throws java.rmi.RemoteException, JvnException
   **/
-   public Serializable jvnLockRead(int joi, JvnRemoteServer js)
-   throws java.rmi.RemoteException, JvnException{
-    // to be completed
-	   JvnObjectImpl objet = (JvnObjectImpl) listeObjetsJVN.get(joi);
-	   JvnLock jlock = listeLockJVN.get(objet.getId());
-	   jlock.addServer(js);
-    return objet.getLock();
-   }
+  public Serializable jvnLockRead(int joi, JvnRemoteServer js)
+		  throws java.rmi.RemoteException, JvnException{
+	  // to be completed
+	  JvnLock jlock = listeLockJVN.get(joi).getJvnLock();
+	  int lock = jlock.getLock();
+	  if ( lock == 2 ) {
+		  ArrayList<JvnRemoteServer> serverAvecLock = jlock.getListServer();
+		  for(JvnRemoteServer s: serverAvecLock){
+			  if (s != js) {
+				  JvnSerialLock serialLock = listeLockJVN.get(joi);
+				  serialLock.setObjet(s.jvnInvalidateWriterForReader(joi));
+			  }
+		  }
+	  }
+	  jlock.addServer(js);
+	  listeLockJVN.get(joi).getJvnLock().setLock(1);
+	  return listeLockJVN.get(joi).getObjet();
+  }
 
   /**
   * Get a Write lock on a JVN object managed by a given JVN server 
@@ -123,8 +135,29 @@ public class JvnCoordImpl
   **/
    public Serializable jvnLockWrite(int joi, JvnRemoteServer js)
    throws java.rmi.RemoteException, JvnException{
-	   JvnObjectImpl objet = (JvnObjectImpl) listeObjetsJVN.get(joi);
-	  return objet.getLock();
+	   
+	   JvnLock jlock = listeLockJVN.get(joi).getJvnLock();
+	   int lock = jlock.getLock();
+	   if ( lock == 2 ) {
+		   ArrayList<JvnRemoteServer> serverAvecLock = jlock.getListServer();
+		   for(JvnRemoteServer s: serverAvecLock){
+			   if (s != js) {
+				   JvnSerialLock serialLock = listeLockJVN.get(joi);
+				   serialLock.setObjet(s.jvnInvalidateWriter(joi));
+			   }
+		   }
+	   }else if ( lock == 1 ) {
+		   ArrayList<JvnRemoteServer> serverAvecLock = jlock.getListServer();
+		   for(JvnRemoteServer s: serverAvecLock){
+			   if (s != js) {
+				   s.jvnInvalidateReader(joi);
+			   }
+		   }
+	   }
+	  
+	   listeLockJVN.get(joi).getJvnLock().setLock(2);
+	   jlock.resetServer(js);
+	  return listeLockJVN.get(joi).getObjet();
    }
 
 	/**
@@ -135,7 +168,9 @@ public class JvnCoordImpl
     public void jvnTerminate(JvnRemoteServer js)
 	 throws java.rmi.RemoteException, JvnException {
 	 // to be completed
+    	
     }
+
 }
 
  

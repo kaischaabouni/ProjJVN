@@ -7,14 +7,15 @@ public class JvnObjectImpl implements JvnObject {
 	private Serializable objet;
 	private int id;
 	private int lock; // 0: No lock , 1: lock READ , 2 lock WRITTE
-	
+	private transient JvnServerImpl remoteServ;
 
 
-	public JvnObjectImpl(Serializable objet, int id) {
+	public JvnObjectImpl(Serializable objet, int id,JvnServerImpl server) {
 		super();
 		this.objet = objet;
 		this.id = id;
 		this.lock = 2;
+		this.remoteServ = server;
 	}
 
 
@@ -27,19 +28,33 @@ public class JvnObjectImpl implements JvnObject {
 		return id;
 	}
 	
+	
+	public void setRemoteServ(JvnServerImpl remoteServ) {
+		this.remoteServ = remoteServ;
+	}
+
+
 	public void jvnLockRead() throws JvnException {
 		// TODO Auto-generated method stub
-		lock = 1;
+
+		if ( lock == 0 ) {
+			objet = remoteServ.jvnLockRead(id);
+			lock = 1;
+		}
 	}
 
 	public void jvnLockWrite() throws JvnException {
 		// TODO Auto-generated method stub
-		lock = 2;
+		if ( lock == 0 || lock == 1) {
+			objet = remoteServ.jvnLockWrite(id);
+			lock = 2;
+		}
 	}
 
-	public void jvnUnLock() throws JvnException {
+	public synchronized void jvnUnLock() throws JvnException {
 		// TODO Auto-generated method stub
 		this.lock = 0;
+		notify();
 	}
 
 	public int jvnGetObjectId() throws JvnException {
@@ -54,19 +69,36 @@ public class JvnObjectImpl implements JvnObject {
 
 	public void jvnInvalidateReader() throws JvnException {
 		// TODO Auto-generated method stub
-		lock = 0;
+		lock = 0; // changer avec les no read
 	}
 
 	public Serializable jvnInvalidateWriter() throws JvnException {
 		// TODO Auto-generated method stub
-		lock = 0;
+		// WAIT
+		if (lock != 0) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return objet;
 	}
 
-	public Serializable jvnInvalidateWriterForReader() throws JvnException {
+	public synchronized Serializable jvnInvalidateWriterForReader() throws JvnException {
 		// TODO Auto-generated method stub
-		lock = 0;
+		// WAIT
+		
+		if (lock != 0)
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return objet;
 	}
 
+	
 }

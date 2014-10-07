@@ -22,7 +22,7 @@ public class JvnServerImpl
 	
   // A JVN server is managed as a singleton 
 	private static JvnServerImpl js = null;
-	// private server rmi;
+	private Hashtable<Integer, JvnObject> tableauObjet;
 	private JvnRemoteCoord remoteCoord;
 	private String name = "CoordName";	
 
@@ -33,6 +33,7 @@ public class JvnServerImpl
 	private JvnServerImpl() throws Exception {
 		super();
 		remoteCoord = (JvnRemoteCoord) Naming.lookup(name);
+		tableauObjet = new Hashtable<Integer, JvnObject>();
 		// to be completed
 	}
 	
@@ -72,7 +73,8 @@ public class JvnServerImpl
 		int id;
 		try {
 			id = remoteCoord.jvnGetObjectId();
-			JvnObject newJVN = new JvnObjectImpl(o,id);	
+			JvnObject newJVN = new JvnObjectImpl(o,id,this);	
+			tableauObjet.put(id, newJVN);
 			return newJVN ; 
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -96,8 +98,6 @@ public class JvnServerImpl
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-
 	}
 	
 	/**
@@ -110,7 +110,14 @@ public class JvnServerImpl
 	throws jvn.JvnException {
     // to be completed 
 		try {
-			return remoteCoord.jvnLookupObject(jon,this);
+			JvnObject result = remoteCoord.jvnLookupObject(jon,this);
+			if (result != null){
+				((JvnObjectImpl)result).setRemoteServ(this);
+				tableauObjet.put(((JvnObjectImpl)result).getId(), result);
+				return result;
+			}else {
+				return null;
+			}
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -166,6 +173,7 @@ public class JvnServerImpl
   public void jvnInvalidateReader(int joi)
 	throws java.rmi.RemoteException,jvn.JvnException {
 		// to be completed 
+	  tableauObjet.get(joi).jvnInvalidateReader();
 	};
 	    
 	/**
@@ -177,7 +185,7 @@ public class JvnServerImpl
   public Serializable jvnInvalidateWriter(int joi)
 	throws java.rmi.RemoteException,jvn.JvnException { 
 		// to be completed 
-		return null;
+		return tableauObjet.get(joi).jvnInvalidateWriter();
 	};
 	
 	/**
@@ -189,7 +197,7 @@ public class JvnServerImpl
    public Serializable jvnInvalidateWriterForReader(int joi)
 	 throws java.rmi.RemoteException,jvn.JvnException { 
 		// to be completed 
-		return null;
+		return tableauObjet.get(joi).jvnInvalidateWriterForReader();
 	 };
 
 }
