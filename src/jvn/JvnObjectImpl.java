@@ -6,7 +6,7 @@ public class JvnObjectImpl implements JvnObject {
 	
 	private Serializable objet;
 	private int id;
-	private int lock; // 0: No lock , 1: lock READ , 2 lock WRITTE
+	private JvnState lock; // 0: No lock , 1: lock READ , 2 lock WRITTE
 	private transient JvnServerImpl remoteServ;
 
 
@@ -14,12 +14,12 @@ public class JvnObjectImpl implements JvnObject {
 		super();
 		this.objet = objet;
 		this.id = id;
-		this.lock = 2;
+		this.lock = JvnState.W;
 		this.remoteServ = server;
 	}
 
 
-	public int getLock() {
+	public JvnState getLock() {
 		return lock;
 	}
 
@@ -27,6 +27,8 @@ public class JvnObjectImpl implements JvnObject {
 	public int getId() {
 		return id;
 	}
+	
+	
 	
 	
 	public void setRemoteServ(JvnServerImpl remoteServ) {
@@ -37,23 +39,53 @@ public class JvnObjectImpl implements JvnObject {
 	public void jvnLockRead() throws JvnException {
 		// TODO Auto-generated method stub
 
-		if ( lock == 0 ) {
+		if ( lock == JvnState.NL ) {
 			objet = remoteServ.jvnLockRead(id);
-			lock = 1;
+			lock = JvnState.R;
+		}else if (lock == JvnState.W || lock == JvnState.WC || lock == JvnState.RWC) {
+			lock = JvnState.RWC;
+		}else if (lock == JvnState.RC || lock == JvnState.R) {
+			lock = JvnState.R;
 		}
 	}
 
 	public void jvnLockWrite() throws JvnException {
 		// TODO Auto-generated method stub
-		if ( lock == 0 || lock == 1) {
+		if ( lock == JvnState.NL ) {
 			objet = remoteServ.jvnLockWrite(id);
-			lock = 2;
+			lock = JvnState.W;
+		}else if (lock == JvnState.W ) {
+			lock = JvnState.W;
+		}else if (lock == JvnState.WC ) {
+			lock = JvnState.W;
+		}else if (lock == JvnState.RC ) {
+			objet = remoteServ.jvnLockWrite(id);
+			lock = JvnState.W;
+		}else if (lock == JvnState.RWC ) {
+			lock = JvnState.W;
+		}else if (lock == JvnState.R ) {
+			objet = remoteServ.jvnLockWrite(id);
+			lock = JvnState.W;
 		}
+		
 	}
 
 	public synchronized void jvnUnLock() throws JvnException {
 		// TODO Auto-generated method stub
-		this.lock = 0;
+		if ( lock == JvnState.NL ) {
+
+		}else if (lock == JvnState.W ) {
+			lock = JvnState.WC;
+		}else if (lock == JvnState.WC ) {
+			lock = JvnState.WC;
+		}else if (lock == JvnState.RC ) {
+			lock = JvnState.RC;
+		}else if (lock == JvnState.RWC ) {
+			lock = JvnState.RWC;
+		}else if (lock == JvnState.R ) {
+			lock = JvnState.RC;
+		}
+		//lock = JvnState.NL;
 		notify();
 	}
 
@@ -69,19 +101,37 @@ public class JvnObjectImpl implements JvnObject {
 
 	public void jvnInvalidateReader() throws JvnException {
 		// TODO Auto-generated method stub
-		lock = 0; // changer avec les no read
-	}
-
-	public Serializable jvnInvalidateWriter() throws JvnException {
-		// TODO Auto-generated method stub
-		// WAIT
-		if (lock != 0) {
+		 if (lock == JvnState.R ) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			lock = JvnState.NL;
+		}else {
+			lock = JvnState.NL;
+		}
+		
+	}
+
+	public Serializable jvnInvalidateWriter() throws JvnException {
+		// TODO Auto-generated method stub
+		// WAIT
+		if ( lock == JvnState.NL ) {
+			
+		}else if (lock == JvnState.W ) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			lock = JvnState.NL;
+		}else if (lock == JvnState.WC ) {
+			lock = JvnState.NL;
+		}else {
+			lock = JvnState.NL;// ERREUR
 		}
 		return objet;
 	}
@@ -90,14 +140,29 @@ public class JvnObjectImpl implements JvnObject {
 		// TODO Auto-generated method stub
 		// WAIT
 		
-		if (lock != 0)
+		if ( lock == JvnState.NL ) {
+			
+		}else if (lock == JvnState.W ) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			lock = JvnState.RWC;
+		}else if (lock == JvnState.WC ) {
+			lock = JvnState.RWC;
+		}else if (lock == JvnState.RWC ) {
+			lock = JvnState.RWC;
+		}else {
+			lock = JvnState.NL;// ERREUR
+		}
 		return objet;
+	}
+
+
+	public void setLock(JvnState lock) {
+		this.lock = lock;
 	}
 
 	

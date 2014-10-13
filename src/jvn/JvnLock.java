@@ -5,21 +5,28 @@ import java.util.Enumeration;
 import java.util.List;
 
 public class JvnLock {
-	private int lock;
+	private JvnState lock;
 	private ArrayList<JvnRemoteServer> listServer;
 	
 	public JvnLock(JvnObject jo, JvnRemoteServer server) {
-		this.lock = ((JvnObjectImpl) jo).getLock();
-		this.listServer = new ArrayList<JvnRemoteServer>(); 
+		this(jo);
 		this.listServer.add(server);
 	}
 
 	public JvnLock(JvnObject jo) {
 		this.lock = ((JvnObjectImpl) jo).getLock();
+		if ( lock == JvnState.NL) {
+			lock = JvnState.NL;
+		}else if (lock == JvnState.W || lock == JvnState.WC || lock == JvnState.RWC ) {
+			lock = JvnState.W;
+		}else if (lock == JvnState.RC || lock == JvnState.R ) {
+			lock = JvnState.R;
+		}
 		this.listServer = new ArrayList<JvnRemoteServer>(); 
 	}
 
-	public int getLock() {
+
+	public JvnState getLock() {
 		return lock;
 	}
 	
@@ -28,7 +35,7 @@ public class JvnLock {
 		this.listServer.add(server);
 	}
 
-	public void setLock(int lock) {
+	public void setLock(JvnState lock) {
 		this.lock = lock;
 	}
 

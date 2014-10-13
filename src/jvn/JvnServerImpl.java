@@ -14,6 +14,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Hashtable;
 import java.io.*;
 
+import com.sun.xml.internal.bind.v2.runtime.Coordinator;
+
 
 
 public class JvnServerImpl 	
@@ -60,6 +62,7 @@ public class JvnServerImpl
 	public  void jvnTerminate()
 	throws jvn.JvnException {
     // to be completed 
+		
 	} 
 	
 	/**

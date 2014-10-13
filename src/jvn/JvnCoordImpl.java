@@ -78,7 +78,7 @@ public class JvnCoordImpl
   throws java.rmi.RemoteException,jvn.JvnException{
     // to be completed 
 		listeObjetsJVN.put(jon,jo);
-		JvnLock  jlock = new JvnLock(jo);
+		JvnLock  jlock = new JvnLock(jo,js);
 		JvnSerialLock jserialLock = new JvnSerialLock(jo.jvnGetObject(), jlock);
 		listeLockJVN.put(((JvnObjectImpl) jo).getId(), jserialLock);
 
@@ -94,8 +94,11 @@ public class JvnCoordImpl
   throws java.rmi.RemoteException,jvn.JvnException{
     // to be completed 
 	  JvnObject objet = listeObjetsJVN.get(jon);
-	  if ( objet != null) {
+	/*  if ( objet != null) {
 			  JvnLock jlock = listeLockJVN.get(((JvnObjectImpl)objet).getId()).getJvnLock();
+	  }*/
+	  if ( objet != null) {
+		  ((JvnObjectImpl)objet).setLock(JvnState.NL);
 	  }
     return objet;
   }
@@ -111,8 +114,8 @@ public class JvnCoordImpl
 		  throws java.rmi.RemoteException, JvnException{
 	  // to be completed
 	  JvnLock jlock = listeLockJVN.get(joi).getJvnLock();
-	  int lock = jlock.getLock();
-	  if ( lock == 2 ) {
+	  JvnState lock = jlock.getLock();
+	  if ( lock == JvnState.W ) {
 		  ArrayList<JvnRemoteServer> serverAvecLock = jlock.getListServer();
 		  for(JvnRemoteServer s: serverAvecLock){
 			  if (s != js) {
@@ -122,7 +125,7 @@ public class JvnCoordImpl
 		  }
 	  }
 	  jlock.addServer(js);
-	  listeLockJVN.get(joi).getJvnLock().setLock(1);
+	  listeLockJVN.get(joi).getJvnLock().setLock(JvnState.R);
 	  return listeLockJVN.get(joi).getObjet();
   }
 
@@ -137,8 +140,8 @@ public class JvnCoordImpl
    throws java.rmi.RemoteException, JvnException{
 	   
 	   JvnLock jlock = listeLockJVN.get(joi).getJvnLock();
-	   int lock = jlock.getLock();
-	   if ( lock == 2 ) {
+	   JvnState lock = jlock.getLock();
+	   if ( lock == JvnState.W ) {
 		   ArrayList<JvnRemoteServer> serverAvecLock = jlock.getListServer();
 		   for(JvnRemoteServer s: serverAvecLock){
 			   if (s != js) {
@@ -146,7 +149,7 @@ public class JvnCoordImpl
 				   serialLock.setObjet(s.jvnInvalidateWriter(joi));
 			   }
 		   }
-	   }else if ( lock == 1 ) {
+	   }else if ( lock == JvnState.R ) {
 		   ArrayList<JvnRemoteServer> serverAvecLock = jlock.getListServer();
 		   for(JvnRemoteServer s: serverAvecLock){
 			   if (s != js) {
@@ -155,7 +158,7 @@ public class JvnCoordImpl
 		   }
 	   }
 	  
-	   listeLockJVN.get(joi).getJvnLock().setLock(2);
+	   listeLockJVN.get(joi).getJvnLock().setLock(JvnState.W);
 	   jlock.resetServer(js);
 	  return listeLockJVN.get(joi).getObjet();
    }
