@@ -149,11 +149,11 @@ public class JvnObjectImpl implements JvnObject {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			lock = JvnState.RWC;
+			lock = JvnState.RC;
 		}else if (lock == JvnState.WC ) {
-			lock = JvnState.RWC;
+			lock = JvnState.RC;
 		}else if (lock == JvnState.RWC ) {
-			lock = JvnState.RWC;
+			lock = JvnState.RC;
 		}else {
 			lock = JvnState.NL;// ERREUR
 		}
