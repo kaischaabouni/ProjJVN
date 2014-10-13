@@ -16,11 +16,11 @@ import java.io.*;
 import java.lang.reflect.Proxy;
 
 
-public class Irc {
+public class IrcAvecProxy {
 	public TextArea		text;
 	public TextField	data;
 	Frame 			frame;
-	JvnObject       sentence;
+	ItfSentence       sentence;
 
 
   /**
@@ -28,23 +28,28 @@ public class Irc {
   * create a JVN object nammed IRC for representing the Chat application
   **/
 	public static void main(String argv[]) {
+		
+		
+		
 	   try {
+		   
 		   
 		// initialize JVN
 		JvnServerImpl js = JvnServerImpl.jvnGetServer();
 		
 		// look up the IRC object in the JVN server
 		// if not found, create it, and register it in the JVN server
-		JvnObject jo = js.jvnLookupObject("IRC");
+		ItfSentence jo = (ItfSentence) js.jvnLookupObject("IRC");
 		   
 		if (jo == null) {
-			jo = js.jvnCreateObject((Serializable) new Sentence());
+			//jo = js.jvnCreateObject((Serializable) new Sentence());
+			 jo = (ItfSentence) JvnProxy.newInstance(new Sentence(),js);
 			// after creation, I have a write lock on the object
-			jo.jvnUnLock();
-			js.jvnRegisterObject("IRC", jo);
+			//jo.jvnUnLock();
+			js.jvnRegisterObject("IRC", (JvnObject) jo);
 		}
 		// create the graphical part of the Chat application
-		 new Irc(jo);
+		 new IrcAvecProxy(jo);
 	   
 	   } catch (Exception e) {
 		   System.out.println("IRC problem : " + e.getMessage());
@@ -55,7 +60,7 @@ public class Irc {
    * IRC Constructor
    @param jo the JVN object representing the Chat
    **/
-	public Irc(JvnObject jo) {
+	public IrcAvecProxy(ItfSentence jo) {
 		sentence = jo;
 		frame=new Frame();
 		frame.setLayout(new GridLayout(1,1));
@@ -66,10 +71,10 @@ public class Irc {
 		data=new TextField(40);
 		frame.add(data);
 		Button read_button = new Button("read");
-		read_button.addActionListener(new readListener(this));
+		read_button.addActionListener(new readListener2(this));
 		frame.add(read_button);
 		Button write_button = new Button("write");
-		write_button.addActionListener(new writeListener(this));
+		write_button.addActionListener(new writeListener2(this));
 		frame.add(write_button);
 		frame.setSize(545,201);
 		text.setBackground(Color.black); 
@@ -81,10 +86,10 @@ public class Irc {
  /**
   * Internal class to manage user events (read) on the CHAT application
   **/
- class readListener implements ActionListener {
-	Irc irc;
+ class readListener2 implements ActionListener {
+	IrcAvecProxy irc;
   
-	public readListener (Irc i) {
+	public readListener2 (IrcAvecProxy i) {
 		irc = i;
 	}
    
@@ -92,54 +97,39 @@ public class Irc {
   * Management of user events
   **/
 	public void actionPerformed (ActionEvent e) {
-	 try {
-		// lock the object in read mode
-		irc.sentence.jvnLockRead();
-		
+
 		// invoke the method
-		String s = ((Sentence)(irc.sentence.jvnGetObject())).read();
-		
-		// unlock the object
-		irc.sentence.jvnUnLock();
-		
-		// display the read value
+		String s;
+		s = irc.sentence.read();
 		irc.data.setText(s);
 		irc.text.append(s+"\n");
-	   } catch (JvnException je) {
-		   System.out.println("IRC problem : " + je.getMessage());
-	   }
+		   
+	//	String s = irc.sentence.read();
+		
+		// display the read value
+		
 	}
 }
 
  /**
   * Internal class to manage user events (write) on the CHAT application
   **/
- class writeListener implements ActionListener {
-	Irc irc;
+ class writeListener2 implements ActionListener {
+	IrcAvecProxy irc;
   
-	public writeListener (Irc i) {
+	public writeListener2 (IrcAvecProxy i) {
         	irc = i;
 	}
   
   /**
     * Management of user events
    **/
-	public void actionPerformed (ActionEvent e) {
-	   try {	
+	public void actionPerformed (ActionEvent e) {	
 		// get the value to be written from the buffer
-    String s = irc.data.getText();
-        	
-    // lock the object in write mode
-		irc.sentence.jvnLockWrite();
-		
-		// invoke the method
-		((Sentence)(irc.sentence.jvnGetObject())).write(s);
-		
-		// unlock the object
-		irc.sentence.jvnUnLock();
-	 } catch (JvnException je) {
-		   System.out.println("IRC problem  : " + je.getMessage());
-	 }
+		String s = irc.data.getText();
+
+		irc.sentence.write(s);
+
 	}
 }
 

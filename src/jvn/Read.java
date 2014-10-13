@@ -5,7 +5,6 @@ import java.lang.annotation.*;
 //Annotation associated with a type (Classe, interface)
 @Target(ElementType.METHOD)
 
-
 public @interface Read {
 
 }
