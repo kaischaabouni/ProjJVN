@@ -28,34 +28,15 @@ public class IrcAvecProxy {
   * create a JVN object nammed IRC for representing the Chat application
   **/
 	public static void main(String argv[]) {
-		
-		
-		
-	   try {
-		   
-		   ItfSentence jo = (ItfSentence) JvnProxy.newInstance((Serializable)new Sentence()); 
-		// initialize JVN
-		/*JvnServerImpl js = JvnServerImpl.jvnGetServer();
-		
-		// look up the IRC object in the JVN server
-		// if not found, create it, and register it in the JVN server
-		JvnObject jo =  (JvnObject) js.jvnLookupObject("IRC");
-		   
-		if (jo == null) {
-			//jo = js.jvnCreateObject((Serializable) new Sentence());
-			
-			jo = (JvnObject) 
-			// jo = (JvnProxy) JvnProxy.newInstance(new Sentence(),js);
-			// after creation, I have a write lock on the object
-			//jo.jvnUnLock();
-			js.jvnRegisterObject("IRC", (JvnObject) jo.jvnGetObject());
-		}*/
-		// create the graphical part of the Chat application
-		 new IrcAvecProxy(jo);
-	   
-	   } catch (Exception e) {
-		   System.out.println("IRC problem : " + e.getMessage());
-	   }
+		try {
+			JvnServerImpl js = JvnServerImpl.jvnGetServer();
+			ItfSentence jo = (ItfSentence) JvnProxy.newInstance((Serializable)new Sentence(),js); 
+
+			new IrcAvecProxy(jo);
+
+		} catch (Exception e) {
+			System.out.println("IRC problem : " + e.getMessage());
+		}
 	}
 
   /**

@@ -15,9 +15,9 @@ public class JvnProxy implements InvocationHandler {
 
 	private JvnObject obj;
 	
-	public static Object newInstance(Serializable obj) {
+	public static Object newInstance(Serializable obj,JvnServerImpl js) {
 		
-		JvnServerImpl js = JvnServerImpl.jvnGetServer();
+
 		try {
 			JvnObject jo =  js.jvnLookupObject("IRC");
 		   
