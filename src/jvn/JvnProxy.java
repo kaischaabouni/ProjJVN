@@ -1,49 +1,63 @@
 package jvn;
 
+import irc.ItfSentence;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-public class JvnProxy  implements  InvocationHandler {
+public class JvnProxy implements InvocationHandler {
 
 
-	public JvnProxy(Object jo, JvnServerImpl js) {
-	
-		// TODO Auto-generated constructor stub
-		try {
-			obj = js.jvnCreateObject((Serializable)jo);
-		} catch (JvnException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
+	public JvnProxy(JvnObject jo) {
+		obj = jo;
 	}
 
 	private JvnObject obj;
 	
-	public static Object newInstance(Object obj,JvnServerImpl js) {
-		return java.lang.reflect.Proxy.newProxyInstance(
-				obj.getClass().getClassLoader(),
-				obj.getClass().getInterfaces(),
-				new JvnProxy(obj,js));
+	public static Object newInstance(Serializable obj) {
+		
+		JvnServerImpl js = JvnServerImpl.jvnGetServer();
+		try {
+			JvnObject jo =  js.jvnLookupObject("IRC");
+		   
+			if (jo == null) {
+				//jo = js.jvnCreateObject((Serializable) new Sentence());
+				jo = js.jvnCreateObject(obj);
+				//jo = (JvnObject) new JvnProxy(obj);
+				// jo = (JvnProxy) JvnProxy.newInstance(new Sentence(),js);
+				// after creation, I have a write lock on the object
+				//jo.jvnUnLock();
+				jo.jvnUnLock();
+				js.jvnRegisterObject("IRC", jo);				
+			}		
+			return java.lang.reflect.Proxy.newProxyInstance(
+					obj.getClass().getClassLoader(),
+					obj.getClass().getInterfaces(),
+				new JvnProxy(jo));
+		} catch (JvnException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
-	public JvnObject invoke(Object proxy, Method m, Object[] args)
+	public Object invoke(Object proxy, Method m, Object[] args)
 	{
 		// TODO Auto-generated method stub
 		try {
-			if(m.getName() == "read") {				
-				//((JvnObject)obj).jvnLockRead();
-			} else if (m.getName() == "write") {								
-				//((JvnObject)obj).jvnLockWrite();
+			if(m.getName() == "read") {		
+				System.out.println("read");
+				obj.jvnLockRead();
+			} else if (m.getName() == "write") {	
+				System.out.println("write");
+				obj.jvnLockWrite();
 			}
-			//JvnObject result = m.invoke(obj, args);
-			
-		//	((JvnObject)obj).jvnUnLock();
+			Object result = m.invoke(obj.jvnGetObject(), args);
+			obj.jvnUnLock();
 			
 			System.out.println("Coucou");
-			return null;
+			return result;
 		//	return result;
 		} catch (Exception e) {
 
@@ -51,5 +65,7 @@ public class JvnProxy  implements  InvocationHandler {
 		return null;
 		
 	}
+
+	
 
 }
