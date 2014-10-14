@@ -25,7 +25,6 @@ public class JvnServerImpl
   // A JVN server is managed as a singleton 
 	private static JvnServerImpl js = null;
 	private Hashtable<Integer, JvnObject> tableauObjet;
-	private JvnObject[] tableauLimiteObjet;
 	private JvnRemoteCoord remoteCoord;
 	private String name = "CoordName";	
 
@@ -37,7 +36,6 @@ public class JvnServerImpl
 		super();
 		remoteCoord = (JvnRemoteCoord) Naming.lookup(name);
 		tableauObjet = new Hashtable<Integer, JvnObject>();
-		tableauLimiteObjet = new JvnObject[5];
 		// to be completed
 	}
 	
