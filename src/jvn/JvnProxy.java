@@ -1,6 +1,8 @@
 package jvn;
 
 import irc.ItfSentence;
+import irc.Read;
+import irc.Write;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
@@ -46,17 +48,18 @@ public class JvnProxy implements InvocationHandler {
 	{
 		// TODO Auto-generated method stub
 		try {
-			if(m.getName() == "read") {		
+			if ( m.isAnnotationPresent(Read.class)) {
 				System.out.println("read");
 				obj.jvnLockRead();
-			} else if (m.getName() == "write") {	
+			}
+			if ( m.isAnnotationPresent(Write.class)) {
 				System.out.println("write");
 				obj.jvnLockWrite();
 			}
 			Object result = m.invoke(obj.jvnGetObject(), args);
 			obj.jvnUnLock();
 			
-			System.out.println("Coucou");
+			System.out.println(m.getAnnotations());
 			return result;
 		//	return result;
 		} catch (Exception e) {
