@@ -9,6 +9,7 @@
 package irc;
 
 public class Sentence implements ItfSentence {
+	
 	String 		data;
   
 	public Sentence() {

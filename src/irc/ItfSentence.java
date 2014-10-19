@@ -1,3 +1,7 @@
+/*
+ * Interface de Sentence
+ */
+
 package irc;
 
 

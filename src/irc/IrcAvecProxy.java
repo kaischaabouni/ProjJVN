@@ -13,7 +13,6 @@ import java.awt.event.*;
 import jvn.*;
 
 import java.io.*;
-import java.lang.reflect.Proxy;
 
 
 public class IrcAvecProxy {
