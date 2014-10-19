@@ -1,4 +1,4 @@
-package jvn;
+package irc;
 import java.lang.annotation.*;
 //Is the annotation available at execution time
 @Retention(RetentionPolicy.RUNTIME)

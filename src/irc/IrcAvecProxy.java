@@ -28,32 +28,15 @@ public class IrcAvecProxy {
   * create a JVN object nammed IRC for representing the Chat application
   **/
 	public static void main(String argv[]) {
-		
-		
-		
-	   try {
-		   
-		   
-		// initialize JVN
-		JvnServerImpl js = JvnServerImpl.jvnGetServer();
-		
-		// look up the IRC object in the JVN server
-		// if not found, create it, and register it in the JVN server
-		ItfSentence jo = (ItfSentence) js.jvnLookupObject("IRC");
-		   
-		if (jo == null) {
-			//jo = js.jvnCreateObject((Serializable) new Sentence());
-			 jo = (ItfSentence) JvnProxy.newInstance(new Sentence(),js);
-			// after creation, I have a write lock on the object
-			//jo.jvnUnLock();
-			js.jvnRegisterObject("IRC", (JvnObject) jo);
+		try {
+			JvnServerImpl js = JvnServerImpl.jvnGetServer();
+			ItfSentence jo = (ItfSentence) JvnProxy.newInstance((Serializable)new Sentence(),js); 
+
+			new IrcAvecProxy(jo);
+
+		} catch (Exception e) {
+			System.out.println("IRC problem : " + e.getMessage());
 		}
-		// create the graphical part of the Chat application
-		 new IrcAvecProxy(jo);
-	   
-	   } catch (Exception e) {
-		   System.out.println("IRC problem : " + e.getMessage());
-	   }
 	}
 
   /**
@@ -100,9 +83,12 @@ public class IrcAvecProxy {
 
 		// invoke the method
 		String s;
-		s = irc.sentence.read();
-		irc.data.setText(s);
-		irc.text.append(s+"\n");
+
+			s = irc.sentence.read();
+			irc.data.setText(s);
+			irc.text.append(s+"\n");
+		
+		
 		   
 	//	String s = irc.sentence.read();
 		
@@ -128,7 +114,10 @@ public class IrcAvecProxy {
 		// get the value to be written from the buffer
 		String s = irc.data.getText();
 
-		irc.sentence.write(s);
+			 irc.sentence.write(s);
+			irc.data.setText(s);
+			irc.text.append(s+"\n");
+	
 
 	}
 }

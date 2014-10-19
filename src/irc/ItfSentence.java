@@ -1,8 +1,12 @@
 package irc;
 
-public interface ItfSentence extends java.io.Serializable{
-	public void write(String text);
 
+public interface ItfSentence extends java.io.Serializable{
+	
+	@Write
+	public void write(String text);
+	
+	@Read
 	public String read();
 	
 }
