@@ -4,8 +4,9 @@ Projet Javanaise
 
 -Equipe:
 
-  Alexandre MORJARET: alexandre.morjaret@e.ujf-grenoble.fr
-  Kaïs CHAABOUNI: kais.chaabouni@e.ujf-grenoble.fr
+  * Alexandre MORJARET: alexandre.morjaret@e.ujf-grenoble.fr
+  
+  * Kaïs CHAABOUNI: kais.chaabouni@e.ujf-grenoble.fr
 
 
 -Avancement:
