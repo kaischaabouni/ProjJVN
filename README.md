@@ -20,5 +20,5 @@ Projet Javanaise
   * Lancer le coordinateur, en exécutant JvnCoordImpl
   * Lancer les clients:
   * Tests de chat: 
-      -> Lancer Irc pour tester JVN version 1
-      -> Lancer IrcAvecProxy pour tester JVN version 2
+      - Lancer Irc pour tester JVN version 1
+      - Lancer IrcAvecProxy pour tester JVN version 2
