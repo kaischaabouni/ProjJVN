@@ -24,8 +24,14 @@ public class JvnServerImpl
 	
   // A JVN server is managed as a singleton 
 	private static JvnServerImpl js = null;
+	
+	//objects récupérés par le serveur loval js
 	private Hashtable<Integer, JvnObject> tableauObjet;
+	
+	//le coordinateur distant (remote)
 	private JvnRemoteCoord remoteCoord;
+	
+	//nom symbolique du coordinateur (constant)
 	private String name = "CoordName";	
 
   /**
