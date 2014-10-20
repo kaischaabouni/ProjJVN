@@ -14,8 +14,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Hashtable;
 import java.io.*;
 
-import com.sun.xml.internal.bind.v2.runtime.Coordinator;
-
 
 
 public class JvnServerImpl 	
@@ -25,7 +23,7 @@ public class JvnServerImpl
   // A JVN server is managed as a singleton 
 	private static JvnServerImpl js = null;
 	
-	//objects récupérés par le serveur loval js
+	//tableau objects récupérés par le serveur loval js
 	private Hashtable<Integer, JvnObject> tableauObjet;
 	
 	//le coordinateur distant (remote)
@@ -78,15 +76,14 @@ public class JvnServerImpl
 	**/
 	public  JvnObject jvnCreateObject(Serializable o)
 	throws jvn.JvnException { 
-		// to be completed 
 		int id;
 		try {
 			id = remoteCoord.jvnGetObjectId();
-			JvnObject newJVN = new JvnObjectImpl(o,id,this);	
+			JvnObject newJVN = new JvnObjectImpl(o,id,this);
+			//insérer le nouvel objet dans le tableau local "tableauObjet"
 			tableauObjet.put(id, newJVN);
 			return newJVN ; 
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -100,11 +97,10 @@ public class JvnServerImpl
 	**/
 	public  void jvnRegisterObject(String jon, JvnObject jo)
 	throws jvn.JvnException {
-		// to be completed 
 		try {
+			//appel de la fonction enregistrer de l'objet distant coordianteur
 			remoteCoord.jvnRegisterObject(jon,jo,this);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -117,7 +113,6 @@ public class JvnServerImpl
 	**/
 	public  JvnObject jvnLookupObject(String jon)
 	throws jvn.JvnException {
-    // to be completed 
 		try {
 			JvnObject result = remoteCoord.jvnLookupObject(jon,this);
 			if (result != null){
@@ -128,7 +123,6 @@ public class JvnServerImpl
 				return null;
 			}
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -143,11 +137,9 @@ public class JvnServerImpl
 	**/
    public Serializable jvnLockRead(int joi)
 	 throws JvnException {
-		// to be completed 
 		try {
 			return remoteCoord.jvnLockRead(joi, this);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -161,11 +153,9 @@ public class JvnServerImpl
 	**/
    public Serializable jvnLockWrite(int joi)
 	 throws JvnException {
-		// to be completed 
 		try {
 			return remoteCoord.jvnLockWrite(joi, this);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -181,7 +171,6 @@ public class JvnServerImpl
 	**/
   public void jvnInvalidateReader(int joi)
 	throws java.rmi.RemoteException,jvn.JvnException {
-		// to be completed 
 	  tableauObjet.get(joi).jvnInvalidateReader();
 	};
 	    
@@ -193,7 +182,6 @@ public class JvnServerImpl
 	**/
   public Serializable jvnInvalidateWriter(int joi)
 	throws java.rmi.RemoteException,jvn.JvnException { 
-		// to be completed 
 		return tableauObjet.get(joi).jvnInvalidateWriter();
 	};
 	
@@ -205,7 +193,6 @@ public class JvnServerImpl
 	**/
    public Serializable jvnInvalidateWriterForReader(int joi)
 	 throws java.rmi.RemoteException,jvn.JvnException { 
-		// to be completed 
 		return tableauObjet.get(joi).jvnInvalidateWriterForReader();
 	 };
 

@@ -1,7 +1,10 @@
+/*
+ * Objet JvnSeriallLock: contient (l'objet applicatif de type serialisable, JvnLock)
+ * Et le JvnLock contient le lock et la liste des serveurs ayant ce lock
+ */
 package jvn;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class JvnSerialLock {
 	private Serializable objet;

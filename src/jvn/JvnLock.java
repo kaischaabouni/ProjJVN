@@ -1,3 +1,7 @@
+/*
+ * Objet JvnLock contenant (lock, liste des serveurs ayant le lock)
+ */
+
 package jvn;
 
 import java.util.ArrayList;
@@ -5,7 +9,10 @@ import java.util.Enumeration;
 import java.util.List;
 
 public class JvnLock {
+	//lock
 	private JvnState lock;
+	
+	//liste des serveurs contenants le lock
 	private ArrayList<JvnRemoteServer> listServer;
 	
 	public JvnLock(JvnObject jo, JvnRemoteServer server) {
