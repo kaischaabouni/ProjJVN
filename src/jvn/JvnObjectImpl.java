@@ -1,5 +1,5 @@
 /*
- * Implémentation de JvnObject (intercepteur de l'objet applicatif)
+ * Implï¿½mentation de JvnObject (intercepteur de l'objet applicatif)
  */
 package jvn;
 
@@ -16,7 +16,7 @@ public class JvnObjectImpl implements JvnObject {
 	//type du verrou acquis {NL,R,W,RC,WC,RWC}
 	private JvnState lock;
 	
-	//Serveur local, qui a créé l'objet
+	//Serveur local, qui a crï¿½ï¿½ l'objet
 	private transient JvnServerImpl remoteServ;
 
 	public JvnObjectImpl(Serializable objet, int id,JvnServerImpl server) {
@@ -39,7 +39,7 @@ public class JvnObjectImpl implements JvnObject {
 		this.remoteServ = remoteServ;
 	}
 
-	//acquérir le verrou R pour l'objet
+	//acquï¿½rir le verrou R pour l'objet
 	public void jvnLockRead() throws JvnException {
 		if ( lock == JvnState.NL ) {
 			objet = remoteServ.jvnLockRead(id);
@@ -51,7 +51,7 @@ public class JvnObjectImpl implements JvnObject {
 		}
 	}
 	
-	//acquérir le verrou W pour l'objet
+	//acquï¿½rir le verrou W pour l'objet
 	public void jvnLockWrite() throws JvnException {
 		if ( lock == JvnState.NL || lock == JvnState.RC || lock == JvnState.R) {
 			objet = remoteServ.jvnLockWrite(id);
@@ -63,12 +63,13 @@ public class JvnObjectImpl implements JvnObject {
 
 	//Liberer, relacher le verrou
 	public synchronized void jvnUnLock() throws JvnException {
-		if (lock == JvnState.W ) 
+		if (lock == JvnState.W  || lock == JvnState.RWC) 
 			lock = JvnState.WC;
 		else if (lock == JvnState.R ) 
 			lock = JvnState.RC;
 
-		notify();
+
+		notifyAll();
 	}
 
 	public int jvnGetObjectId() throws JvnException {

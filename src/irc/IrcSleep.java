@@ -16,7 +16,7 @@ import java.io.*;
 import java.lang.reflect.Proxy;
 
 
-public class Irc {
+public class IrcSleep {
 	public TextArea		text;
 	public TextField	data;
 	Frame 			frame;
@@ -44,7 +44,7 @@ public class Irc {
 			js.jvnRegisterObject("IRC", jo);
 		}
 		// create the graphical part of the Chat application
-		 new Irc(jo);
+		 new IrcSleep(jo);
 	   
 	   } catch (Exception e) {
 		   System.out.println("IRC problem : " + e.getMessage());
@@ -55,7 +55,7 @@ public class Irc {
    * IRC Constructor
    @param jo the JVN object representing the Chat
    **/
-	public Irc(JvnObject jo) {
+	public IrcSleep(JvnObject jo) {
 		sentence = jo;
 		frame=new Frame();
 		frame.setLayout(new GridLayout(1,1));
@@ -66,10 +66,10 @@ public class Irc {
 		data=new TextField(40);
 		frame.add(data);
 		Button read_button = new Button("read");
-		read_button.addActionListener(new readListener(this));
+		read_button.addActionListener(new readListener1(this));
 		frame.add(read_button);
 		Button write_button = new Button("write");
-		write_button.addActionListener(new writeListener(this));
+		write_button.addActionListener(new writeListener1(this));
 		frame.add(write_button);
 		frame.setSize(545,201);
 		text.setBackground(Color.black); 
@@ -81,10 +81,10 @@ public class Irc {
  /**
   * Internal class to manage user events (read) on the CHAT application
   **/
- class readListener implements ActionListener {
-	Irc irc;
+ class readListener1 implements ActionListener {
+	IrcSleep irc;
   
-	public readListener (Irc i) {
+	public readListener1 (IrcSleep i) {
 		irc = i;
 	}
    
@@ -114,10 +114,10 @@ public class Irc {
  /**
   * Internal class to manage user events (write) on the CHAT application
   **/
- class writeListener implements ActionListener {
-	Irc irc;
+ class writeListener1 implements ActionListener {
+	IrcSleep irc;
   
-	public writeListener (Irc i) {
+	public writeListener1 (IrcSleep i) {
         	irc = i;
 	}
   
@@ -134,10 +134,14 @@ public class Irc {
 
 			// invoke the method
 			((Sentence)(irc.sentence.jvnGetObject())).write(s);
+			Thread.sleep(6000);
 			// unlock the object
 			irc.sentence.jvnUnLock();
 		} catch (JvnException je) {
 			System.out.println("IRC problem  : " + je.getMessage());
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
  }
