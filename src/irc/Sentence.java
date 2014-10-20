@@ -13,7 +13,7 @@ public class Sentence implements ItfSentence {
 	String 		data;
   
 	public Sentence() {
-		data = new String("");
+		data = new String("1");
 	}
 	
 	public void write(String text) {
