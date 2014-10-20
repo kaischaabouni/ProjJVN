@@ -16,11 +16,11 @@ public class JvnProxy implements InvocationHandler {
 		obj = jo;
 	}
 
-	public static Object newInstance(Serializable obj,JvnServerImpl js) {
+	public static Object newInstance(Serializable obj,JvnServerImpl js,String nom) {
 
 		try {
 			//
-			JvnObject jo =  js.jvnLookupObject("IRC");
+			JvnObject jo =  js.jvnLookupObject(nom);
 		   
 			if (jo == null) {
 				//jo = js.jvnCreateObject((Serializable) new Sentence());
@@ -32,7 +32,7 @@ public class JvnProxy implements InvocationHandler {
 				jo.jvnUnLock();
 				
 				//
-				js.jvnRegisterObject("IRC", jo);				
+				js.jvnRegisterObject(nom, jo);				
 			}		
 			return java.lang.reflect.Proxy.newProxyInstance(
 					obj.getClass().getClassLoader(),
@@ -48,19 +48,19 @@ public class JvnProxy implements InvocationHandler {
 	public Object invoke(Object proxy, Method m, Object[] args)
 	{
 		try {
-			//si la méthode est de type "Read": acquérir le verrou R
+			//si la mï¿½thode est de type "Read": acquï¿½rir le verrou R
 			if ( m.isAnnotationPresent(Read.class)) {
 				System.out.println("read");
 				obj.jvnLockRead();
 			}
-			//si la méthode est de type "Write": acquérir le verrou W
+			//si la mï¿½thode est de type "Write": acquï¿½rir le verrou W
 			if ( m.isAnnotationPresent(Write.class)) {
 				System.out.println("write");
 				obj.jvnLockWrite();
 			}
-			//appeler la méthode
+			//appeler la mï¿½thode
 			Object result = m.invoke(obj.jvnGetObject(), args);
-			//Libérer le Lock
+			//Libï¿½rer le Lock
 			obj.jvnUnLock();
 			//
 			System.out.println(m.getAnnotations());

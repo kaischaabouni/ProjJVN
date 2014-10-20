@@ -4,7 +4,7 @@ Projet Javanaise
 
 -Equipe:
 
-  * Alexandre MORJARET: alexandre.morjaret@e.ujf-grenoble.fr
+  * Alexandre MORJARET: alexandre.morjaret@gmail.com
   
   * Kaïs CHAABOUNI: kais.chaabouni@e.ujf-grenoble.fr
 
@@ -20,5 +20,6 @@ Projet Javanaise
   * Lancer le coordinateur, en exécutant JvnCoordImpl
   * Lancer les clients:
   * Tests de chat: 
-      - Lancer Irc pour tester JVN version 1
-      - Lancer IrcAvecProxy pour tester JVN version 2
+      - Lancer Irc pour tester JVN version 1(objet IRC)
+      - Lancer IrcAvecProxy pour tester JVN version 2 (objet IRC)
+      - Lancer OtherAvecProxy pour tester JVN version 2 (objet MMS)

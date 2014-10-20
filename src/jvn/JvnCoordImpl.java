@@ -20,13 +20,13 @@ public class JvnCoordImpl
               extends UnicastRemoteObject 
 							implements JvnRemoteCoord{
 	
-	//"listeObjetsJVN" : Tableau des ObjetsJVN enregistrés associés aux noms symboliques (nom Symbolique, objetJVN)
+	//"listeObjetsJVN" : Tableau des ObjetsJVN enregistrï¿½s associï¿½s aux noms symboliques (nom Symbolique, objetJVN)
 	private Hashtable<String,JvnObject> listeObjetsJVN;
 	
 	//"listeLockJVN" : Tableau (id , (objet applicatif , lock, liste des serveurs ayant ce lock))
 	private Hashtable<Integer,JvnSerialLock> listeLockJVN;
 	
-	//Pour associer un identifiant unique aux objets créés
+	//Pour associer un identifiant unique aux objets crï¿½ï¿½s
 	private Integer number;
 	
 	//nom symbolique pour l'appel distant au coordinateur
@@ -82,7 +82,7 @@ public class JvnCoordImpl
 	public void jvnRegisterObject(String jon, JvnObject jo, JvnRemoteServer js)
 			throws java.rmi.RemoteException,jvn.JvnException{
 		
-		//Inserer le JVNObject enregistré avec le nom associé dans le tableau "listeObjetsJVN"
+		//Inserer le JVNObject enregistrï¿½ avec le nom associï¿½ dans le tableau "listeObjetsJVN"
 		listeObjetsJVN.put(jon,jo);
 		
 		//Inserer (id, objet, lock) dans le tablea "listeLockJVN"
@@ -101,7 +101,7 @@ public class JvnCoordImpl
 	public JvnObject jvnLookupObject(String jon, JvnRemoteServer js)
 			throws java.rmi.RemoteException,jvn.JvnException{
 
-		//récuperer un JvnObject avec à partir de son nom associé
+		//rï¿½cuperer un JvnObject avec ï¿½ partir de son nom associï¿½
 		JvnObject objet = listeObjetsJVN.get(jon);
 		
 		/*  if ( objet != null) {
@@ -181,6 +181,7 @@ public class JvnCoordImpl
     public void jvnTerminate(JvnRemoteServer js)
 	 throws java.rmi.RemoteException, JvnException {
 	 // to be completed
+    	
     	
     }
 

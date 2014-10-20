@@ -15,7 +15,7 @@ import jvn.*;
 import java.io.*;
 
 
-public class IrcAvecProxy {
+public class OtherAvecProxy {
 	public TextArea		text;
 	public TextField	data;
 	Frame 			frame;
@@ -29,9 +29,9 @@ public class IrcAvecProxy {
 	public static void main(String argv[]) {
 		try {
 			JvnServerImpl js = JvnServerImpl.jvnGetServer();
-			ItfSentence jo = (ItfSentence) JvnProxy.newInstance((Serializable)new Sentence(),js,"IRC"); 
+			ItfSentence jo = (ItfSentence) JvnProxy.newInstance((Serializable)new Sentence(),js,"MMS"); 
 
-			new IrcAvecProxy(jo);
+			new OtherAvecProxy(jo);
 
 		} catch (Exception e) {
 			System.out.println("IRC problem : " + e.getMessage());
@@ -42,7 +42,7 @@ public class IrcAvecProxy {
    * IRC Constructor
    @param jo the JVN object representing the Chat
    **/
-	public IrcAvecProxy(ItfSentence jo) {
+	public OtherAvecProxy(ItfSentence jo) {
 		sentence = jo;
 		frame=new Frame();
 		frame.setLayout(new GridLayout(1,1));
@@ -53,10 +53,10 @@ public class IrcAvecProxy {
 		data=new TextField(40);
 		frame.add(data);
 		Button read_button = new Button("read");
-		read_button.addActionListener(new readListener2(this));
+		read_button.addActionListener(new readListener3(this));
 		frame.add(read_button);
 		Button write_button = new Button("write");
-		write_button.addActionListener(new writeListener2(this));
+		write_button.addActionListener(new writeListener3(this));
 		frame.add(write_button);
 		frame.setSize(545,201);
 		text.setBackground(Color.black); 
@@ -68,10 +68,10 @@ public class IrcAvecProxy {
  /**
   * Internal class to manage user events (read) on the CHAT application
   **/
- class readListener2 implements ActionListener {
-	IrcAvecProxy irc;
+ class readListener3 implements ActionListener {
+	OtherAvecProxy irc;
   
-	public readListener2 (IrcAvecProxy i) {
+	public readListener3 (OtherAvecProxy i) {
 		irc = i;
 	}
    
@@ -99,10 +99,10 @@ public class IrcAvecProxy {
  /**
   * Internal class to manage user events (write) on the CHAT application
   **/
- class writeListener2 implements ActionListener {
-	IrcAvecProxy irc;
+ class writeListener3 implements ActionListener {
+	OtherAvecProxy irc;
   
-	public writeListener2 (IrcAvecProxy i) {
+	public writeListener3 (OtherAvecProxy i) {
         	irc = i;
 	}
   
