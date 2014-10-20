@@ -61,7 +61,7 @@ public class IrcAvecProxy {
 		frame.setSize(545,201);
 		text.setBackground(Color.black); 
 		frame.setVisible(true);
-		frame.addWindowListener(new exitListener(this));
+		frame.addWindowListener(new exitListener2(this));
 	}
 }
 
@@ -93,10 +93,10 @@ public class IrcAvecProxy {
  /**
   * Internal class to manage user events (read) on the CHAT application
   **/
- class exitListener implements WindowListener {
+ class exitListener2 implements WindowListener {
 	IrcAvecProxy irc;
   
-	public exitListener (IrcAvecProxy i) {
+	public exitListener2 (IrcAvecProxy i) {
 		irc = i;
 		
 	}

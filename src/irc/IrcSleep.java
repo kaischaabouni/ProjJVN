@@ -74,6 +74,7 @@ public class IrcSleep {
 		frame.setSize(545,201);
 		text.setBackground(Color.black); 
 		frame.setVisible(true);
+		frame.addWindowListener(new exitListener1(this));
 	}
 }
 
@@ -111,6 +112,61 @@ public class IrcSleep {
 	}
 }
 
+ /**
+  * Internal class to manage user events (read) on the CHAT application
+  **/
+ class exitListener1 implements WindowListener {
+	IrcSleep irc;
+  
+	public exitListener1 (IrcSleep i) {
+		irc = i;
+		
+	}
+   
+
+public void windowActivated(WindowEvent e) {
+	// TODO Auto-generated method stub
+	
+}
+
+public void windowClosed(WindowEvent e) {
+	// TODO Auto-generated method stub
+	
+}
+
+public void windowClosing(WindowEvent e) {
+	// TODO Auto-generated method stub
+	JvnServerImpl js = JvnServerImpl.jvnGetServer();
+	try {
+		js.jvnTerminate();
+	} catch (JvnException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
+	System.exit(0);
+}
+
+public void windowDeactivated(WindowEvent e) {
+	// TODO Auto-generated method stub
+	
+}
+
+public void windowDeiconified(WindowEvent e) {
+	// TODO Auto-generated method stub
+	
+}
+
+public void windowIconified(WindowEvent e) {
+	// TODO Auto-generated method stub
+	
+}
+
+public void windowOpened(WindowEvent e) {
+	// TODO Auto-generated method stub
+	
+}
+}
+ 
  /**
   * Internal class to manage user events (write) on the CHAT application
   **/
