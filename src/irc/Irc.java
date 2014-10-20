@@ -123,25 +123,25 @@ public class Irc {
   
   /**
     * Management of user events
-   **/
+    **/
 	public void actionPerformed (ActionEvent e) {
-	   try {	
-		// get the value to be written from the buffer
-    String s = irc.data.getText();
-        	
-    // lock the object in write mode
-		irc.sentence.jvnLockWrite();
-		
-		// invoke the method
-		((Sentence)(irc.sentence.jvnGetObject())).write(s);
-		
-		// unlock the object
-		irc.sentence.jvnUnLock();
-	 } catch (JvnException je) {
-		   System.out.println("IRC problem  : " + je.getMessage());
-	 }
+		try {	
+			// get the value to be written from the buffer
+			String s = irc.data.getText();
+
+			// lock the object in write mode
+			irc.sentence.jvnLockWrite();
+
+			// invoke the method
+			((Sentence)(irc.sentence.jvnGetObject())).write(s);
+
+			// unlock the object
+			irc.sentence.jvnUnLock();
+		} catch (JvnException je) {
+			System.out.println("IRC problem  : " + je.getMessage());
+		}
 	}
-}
+ }
 
 
 

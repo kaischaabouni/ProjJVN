@@ -23,7 +23,7 @@ public class JvnServerImpl
   // A JVN server is managed as a singleton 
 	private static JvnServerImpl js = null;
 	
-	//tableau objects récupérés par le serveur loval js
+	//tableau objects rï¿½cupï¿½rï¿½s par le serveur loval js
 	private Hashtable<Integer, JvnObject> tableauObjet;
 	
 	//le coordinateur distant (remote)
@@ -40,7 +40,6 @@ public class JvnServerImpl
 		super();
 		remoteCoord = (JvnRemoteCoord) Naming.lookup(name);
 		tableauObjet = new Hashtable<Integer, JvnObject>();
-		// to be completed
 	}
 	
   /**
@@ -80,7 +79,7 @@ public class JvnServerImpl
 		try {
 			id = remoteCoord.jvnGetObjectId();
 			JvnObject newJVN = new JvnObjectImpl(o,id,this);
-			//insérer le nouvel objet dans le tableau local "tableauObjet"
+			//insï¿½rer le nouvel objet dans le tableau local "tableauObjet"
 			tableauObjet.put(id, newJVN);
 			return newJVN ; 
 		} catch (RemoteException e) {

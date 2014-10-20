@@ -23,14 +23,10 @@ public class JvnProxy implements InvocationHandler {
 			JvnObject jo =  js.jvnLookupObject(nom);
 		   
 			if (jo == null) {
-				//jo = js.jvnCreateObject((Serializable) new Sentence());
-				jo = js.jvnCreateObject(obj);
-				//jo = (JvnObject) new JvnProxy(obj);
-				// jo = (JvnProxy) JvnProxy.newInstance(new Sentence(),js);
 				
+				jo = js.jvnCreateObject(obj);			
 				// after creation, I have a write lock on the object
-				jo.jvnUnLock();
-				
+				jo.jvnUnLock();				
 				//
 				js.jvnRegisterObject(nom, jo);				
 			}		
@@ -63,7 +59,7 @@ public class JvnProxy implements InvocationHandler {
 			//Lib�rer le Lock
 			obj.jvnUnLock();
 			//
-			System.out.println(m.getAnnotations());
+			//System.out.println(m.getAnnotations());
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();

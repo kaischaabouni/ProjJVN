@@ -37,14 +37,13 @@ public class JvnCoordImpl
   * @throws JvnException
   **/
 	private JvnCoordImpl() throws Exception {
-		// to be completed
 		listeObjetsJVN = new Hashtable<String,JvnObject>();
 		listeLockJVN = new Hashtable<Integer,JvnSerialLock>();
 		number = 0;
 		
 		LocateRegistry.createRegistry(1099);
 		
-		//associer objet objSayHello au nom name
+		//associer objet rmi au nom name
 		Naming.rebind(name, this);
 	}
 	

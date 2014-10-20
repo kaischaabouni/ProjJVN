@@ -80,18 +80,11 @@ public class IrcAvecProxy {
   **/
 	public void actionPerformed (ActionEvent e) {
 
-		// invoke the method
 		String s;
+		s = irc.sentence.read();
+		irc.data.setText(s);
+		irc.text.append(s+"\n");
 
-			s = irc.sentence.read();
-			irc.data.setText(s);
-			irc.text.append(s+"\n");
-		
-		
-		   
-	//	String s = irc.sentence.read();
-		
-		// display the read value
 		
 	}
 }
@@ -110,16 +103,16 @@ public class IrcAvecProxy {
     * Management of user events
    **/
 	public void actionPerformed (ActionEvent e) {	
-		// get the value to be written from the buffer
+		
 		String s = irc.data.getText();
 
-			 irc.sentence.write(s);
-			irc.data.setText(s);
-			irc.text.append(s+"\n");
-	
+		irc.sentence.write(s);
+		irc.data.setText(s);
+		irc.text.append(s+"\n");
+
 
 	}
-}
+ }
 
 
 
