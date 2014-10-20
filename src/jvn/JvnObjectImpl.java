@@ -40,19 +40,19 @@ public class JvnObjectImpl implements JvnObject {
 	}
 
 	//acqu�rir le verrou R pour l'objet
-	public void jvnLockRead() throws JvnException {
+	public  void jvnLockRead() throws JvnException {
 		if ( lock == JvnState.NL ) {
 			objet = remoteServ.jvnLockRead(id);
 			lock = JvnState.R;
 		}else if (lock == JvnState.W || lock == JvnState.WC || lock == JvnState.RWC) {
-			lock = JvnState.RWC;
+			   lock = JvnState.RWC;
 		}else if (lock == JvnState.RC || lock == JvnState.R) {
 			lock = JvnState.R;
 		}
 	}
 	
 	//acqu�rir le verrou W pour l'objet
-	public void jvnLockWrite() throws JvnException {
+	public  void jvnLockWrite() throws JvnException {
 		if ( lock == JvnState.NL || lock == JvnState.RC || lock == JvnState.R) {
 			objet = remoteServ.jvnLockWrite(id);
 			lock = JvnState.W;

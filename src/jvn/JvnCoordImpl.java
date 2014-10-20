@@ -78,7 +78,7 @@ public class JvnCoordImpl
 	 * @param js  : the remote reference of the JVNServer
 	 * @throws java.rmi.RemoteException,JvnException
 	 **/
-	public void jvnRegisterObject(String jon, JvnObject jo, JvnRemoteServer js)
+	public synchronized void jvnRegisterObject(String jon, JvnObject jo, JvnRemoteServer js)
 			throws java.rmi.RemoteException,jvn.JvnException{
 		
 		//Inserer le JVNObject enregistr� avec le nom associ� dans le tableau "listeObjetsJVN"
@@ -180,7 +180,10 @@ public class JvnCoordImpl
     public void jvnTerminate(JvnRemoteServer js)
 	 throws java.rmi.RemoteException, JvnException {
 	 // to be completed
-    	
+    	for (int i =0; i < number;i++) {
+    		JvnLock jlock = listeLockJVN.get(i).getJvnLock();
+    		jlock.removeServer(js);	
+    	}
     	
     }
 
