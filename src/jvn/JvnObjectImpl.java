@@ -80,7 +80,7 @@ public class JvnObjectImpl implements JvnObject {
 		return objet;
 	}
 
-	public void jvnInvalidateReader() throws JvnException {
+	public synchronized void jvnInvalidateReader() throws JvnException {
 		 if (lock == JvnState.R ) {
 			try {
 				wait();
@@ -94,7 +94,7 @@ public class JvnObjectImpl implements JvnObject {
 		
 	}
 
-	public Serializable jvnInvalidateWriter() throws JvnException {
+	public synchronized Serializable jvnInvalidateWriter() throws JvnException {
 		if (lock == JvnState.W ) {
 			try {
 				wait();
