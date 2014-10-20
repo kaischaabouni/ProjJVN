@@ -1,14 +1,23 @@
+/*
+ * Implémentation de JvnObject (intercepteur de l'objet applicatif)
+ */
 package jvn;
 
 import java.io.Serializable;
 
 public class JvnObjectImpl implements JvnObject {
 	
+	//l'objet applicatif
 	private Serializable objet;
+	
+	//id unique de l'objet
 	private int id;
-	private JvnState lock; // 0: No lock , 1: lock READ , 2 lock WRITTE
+	
+	//type du verrou acquis {NL,R,W,RC,WC,RWC}
+	private JvnState lock;
+	
+	//Serveur local, qui a créé l'objet
 	private transient JvnServerImpl remoteServ;
-
 
 	public JvnObjectImpl(Serializable objet, int id,JvnServerImpl server) {
 		super();
@@ -18,27 +27,20 @@ public class JvnObjectImpl implements JvnObject {
 		this.remoteServ = server;
 	}
 
-
 	public JvnState getLock() {
 		return lock;
 	}
-
 
 	public int getId() {
 		return id;
 	}
 	
-	
-	
-	
 	public void setRemoteServ(JvnServerImpl remoteServ) {
 		this.remoteServ = remoteServ;
 	}
 
-
+	//acquérir le verrou R pour l'objet
 	public void jvnLockRead() throws JvnException {
-		// TODO Auto-generated method stub
-
 		if ( lock == JvnState.NL ) {
 			objet = remoteServ.jvnLockRead(id);
 			lock = JvnState.R;
@@ -48,64 +50,40 @@ public class JvnObjectImpl implements JvnObject {
 			lock = JvnState.R;
 		}
 	}
-
+	
+	//acquérir le verrou W pour l'objet
 	public void jvnLockWrite() throws JvnException {
-		// TODO Auto-generated method stub
-		if ( lock == JvnState.NL ) {
+		if ( lock == JvnState.NL || lock == JvnState.RC || lock == JvnState.R) {
 			objet = remoteServ.jvnLockWrite(id);
 			lock = JvnState.W;
-		}else if (lock == JvnState.W ) {
-			lock = JvnState.W;
-		}else if (lock == JvnState.WC ) {
-			lock = JvnState.W;
-		}else if (lock == JvnState.RC ) {
-			objet = remoteServ.jvnLockWrite(id);
-			lock = JvnState.W;
-		}else if (lock == JvnState.RWC ) {
-			lock = JvnState.W;
-		}else if (lock == JvnState.R ) {
-			objet = remoteServ.jvnLockWrite(id);
+		}else if (lock == JvnState.W || lock == JvnState.WC || lock == JvnState.RWC) {
 			lock = JvnState.W;
 		}
-		
 	}
 
+	//Liberer, relacher le verrou
 	public synchronized void jvnUnLock() throws JvnException {
-		// TODO Auto-generated method stub
-		if ( lock == JvnState.NL ) {
+		if (lock == JvnState.W ) 
+			lock = JvnState.WC;
+		else if (lock == JvnState.R ) 
+			lock = JvnState.RC;
 
-		}else if (lock == JvnState.W ) {
-			lock = JvnState.WC;
-		}else if (lock == JvnState.WC ) {
-			lock = JvnState.WC;
-		}else if (lock == JvnState.RC ) {
-			lock = JvnState.RC;
-		}else if (lock == JvnState.RWC ) {
-			lock = JvnState.RWC;
-		}else if (lock == JvnState.R ) {
-			lock = JvnState.RC;
-		}
-		//lock = JvnState.NL;
 		notify();
 	}
 
 	public int jvnGetObjectId() throws JvnException {
-		// TODO Auto-generated method stub
 		return id;
 	}
 
 	public Serializable jvnGetObject() throws JvnException {
-		// TODO Auto-generated method stub
 		return objet;
 	}
 
 	public void jvnInvalidateReader() throws JvnException {
-		// TODO Auto-generated method stub
 		 if (lock == JvnState.R ) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			lock = JvnState.NL;
@@ -116,11 +94,7 @@ public class JvnObjectImpl implements JvnObject {
 	}
 
 	public Serializable jvnInvalidateWriter() throws JvnException {
-		// TODO Auto-generated method stub
-		// WAIT
-		if ( lock == JvnState.NL ) {
-			
-		}else if (lock == JvnState.W ) {
+		if (lock == JvnState.W ) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -131,18 +105,13 @@ public class JvnObjectImpl implements JvnObject {
 		}else if (lock == JvnState.WC ) {
 			lock = JvnState.NL;
 		}else {
-			lock = JvnState.NL;// ERREUR
+			lock = JvnState.NL; 
 		}
 		return objet;
 	}
 
-	public synchronized Serializable jvnInvalidateWriterForReader() throws JvnException {
-		// TODO Auto-generated method stub
-		// WAIT
-		
-		if ( lock == JvnState.NL ) {
-			
-		}else if (lock == JvnState.W ) {
+	public synchronized Serializable jvnInvalidateWriterForReader() throws JvnException {		
+		if (lock == JvnState.W ) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -150,12 +119,10 @@ public class JvnObjectImpl implements JvnObject {
 				e.printStackTrace();
 			}
 			lock = JvnState.RC;
-		}else if (lock == JvnState.WC ) {
-			lock = JvnState.RC;
-		}else if (lock == JvnState.RWC ) {
+		}else if (lock == JvnState.WC || lock == JvnState.RWC ) {
 			lock = JvnState.RC;
 		}else {
-			lock = JvnState.NL;// ERREUR
+			lock = JvnState.NL;
 		}
 		return objet;
 	}
